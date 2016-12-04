@@ -52,7 +52,12 @@ def game
         puts "Current completion: #{game_get_completion}%"
         print "Choose a color: "
         choice = gets.to_color
+        update_board(0, 0, choice)
         turns += 1
+
+        if game_get_completion == 100
+            break
+        end
     end
 end
 
@@ -68,8 +73,30 @@ def game_get_completion
     return (correct_count.to_f/block_count*100).round # Return percentage
 end
 
+def update_board(x, y, color)
+    old_color = $board[y][x]
+    $board[y][x] = color
+
+    if y>0 && $board[y-1][x] == old_color
+        update_board(x, y-1, color)
+    end
+    
+    if y<$board_y && $board[y+1][x] == old_color
+        update_board(x, y+1, color)
+    end
+
+    if x>0 && $board[y][x-1] == old_color
+        update_board(x-1, y, color)
+    end
+    
+    if x<$board_x && $board[y][x+1] == old_color
+        update_board(x+1, y, color)
+    end
+end
+
 class String
     def to_color
+        # Add a method to Ruby strings that can parse colors
         case self.chomp.downcase
             when "r", "red"
                 :red
@@ -130,7 +157,3 @@ while true
             puts "I didn't understand that option"
     end
 end
-
-$board = get_board($board_x, $board_y)
-kawaii_print
-puts $board.inspect
