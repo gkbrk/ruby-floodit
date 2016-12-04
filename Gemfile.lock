@@ -9,6 +9,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  colorize
   console_splash
 
 BUNDLED WITH
