@@ -41,13 +41,61 @@ end
 
 ################################
 
+def game
+    $board = get_board($board_x, $board_y)
+    turns = 0
+    while true
+        clear_screen
+        puts
+        kawaii_print
+        puts "Number of turns: #{turns}"
+        puts "Current completion: #{game_get_completion}%"
+        print "Choose a color: "
+        choice = gets.to_color
+        turns += 1
+    end
+end
+
+def game_get_completion
+    current_color = $board[0][0]
+    block_count = $board.flatten.length
+    correct_count = 0
+    $board.flatten.each do |block|
+        if block == current_color
+            correct_count += 1
+        end
+    end
+    return (correct_count.to_f/block_count*100).round # Return percentage
+end
+
+class String
+    def to_color
+        case self.chomp.downcase
+            when "r", "red"
+                :red
+            when "b", "blue"
+                :blue
+            when "g", "green"
+                :green
+            when "y", "yellow"
+                :yellow
+            when "c", "cyan"
+                :cyan
+            when "m", "magenta"
+                :magenta
+            else
+                :red
+        end
+    end
+end
+
+################################
+
 # Show splash screen
 splash = ConsoleSplash.new
 splash.write_header("CLI Flood-It", "Gokberk Yaltirakli", "1.0")
-splash.write_top_pattern("=")
-splash.write_bottom_pattern("=")
-splash.write_left_pattern("=")
-splash.write_right_pattern("=")
+splash.write_horizontal_pattern("=")
+splash.write_vertical_pattern("=")
 splash.splash()
 gets()
 
@@ -56,8 +104,6 @@ clear_screen
 $board_x = 14
 $board_y = 9
 $board = [[]]
-
-$board = get_board($board_x, $board_y)
 
 while true
     puts "Main menu:"
@@ -70,6 +116,7 @@ while true
     case gets.chomp.downcase
         when "s"
             puts "Starting the game"
+            game
         when "c"
             print "Width [Currently #{$board_x}]: "
             $board_x = gets.to_i
