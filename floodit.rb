@@ -1,22 +1,32 @@
+require 'console_splash'
 
 def get_board(width, height)
-  # TODO: Implement this method
-  #
-  # This method should return a two-dimensional array.
-  # Each element of the array should be one of the
-  # following values (These are "symbols", you can use
-  # them like constant values):
-  # :red
-  # :blue
-  # :green
-  # :yellow
-  # :cyan
-  # :magenta
-  #
-  # It is important that this method is used because
-  # this will be used for checking the functionality
-  # of your implementation.
+    # Returns a randomly generated board of given width and height
+    board = Array.new
+    for y in 0..height
+        line = [:red, :blue, :green, :yellow, :cyan, :magenta].sample(width)
+        board.push(line)
+    end
+    return board
 end
 
-# TODO: Implement everything else as described in the
-#       assignment brief.
+def clear_screen
+    puts "\e[H\e[2J"
+end
+
+################################
+
+# Show splash screen
+splash = ConsoleSplash.new
+splash.write_header("CLI Flood-It", "Gokberk Yaltirakli", "1.0")
+splash.write_top_pattern("=")
+splash.write_bottom_pattern("=")
+splash.write_left_pattern("=")
+splash.write_right_pattern("=")
+splash.splash()
+gets()
+
+clear_screen
+
+$board = get_board(5, 5)
+puts $board.inspect
