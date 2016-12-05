@@ -45,7 +45,11 @@ def game
         turns += 1
 
         if game_get_completion == 100
+            if $best_score == nil || turns < $best_score
+                $best_score = turns
+            end
             clear_screen
+            puts
             kawaii_print
             puts "You won after #{turns} turns"
             gets
@@ -71,19 +75,23 @@ def update_board(x, y, color)
     old_color = $board[y][x]
     $board[y][x] = color
 
-    if y>0 && $board[y-1][x] == old_color
+    if old_color == color
+        return
+    end
+
+    if y > 0 && $board[y-1][x] == old_color
         update_board(x, y-1, color)
     end
     
-    if y<$board_y && $board[y+1][x] == old_color
+    if y < $board_y && $board[y+1][x] == old_color
         update_board(x, y+1, color)
     end
 
-    if x>0 && $board[y][x-1] == old_color
+    if x > 0 && $board[y][x-1] == old_color
         update_board(x-1, y, color)
     end
     
-    if x<$board_x && $board[y][x+1] == old_color
+    if x < $board_x && $board[y][x+1] == old_color
         update_board(x+1, y, color)
     end
 end
@@ -120,32 +128,37 @@ splash.write_header("CLI Flood-It", "Gokberk Yaltirakli", "1.0")
 splash.write_horizontal_pattern("=")
 splash.write_vertical_pattern("=")
 splash.splash()
-gets()
+gets
 
 clear_screen
 
-$board_x = 14
-$board_y = 9
+$board_x = 13
+$board_y = 8
 $board = [[]]
+$best_score = nil
 
 while true
     puts "Main menu:"
     puts "[s] Start game"
     puts "[c] Change size"
     puts "[q] Quit"
-
-    puts "Game size #{$board_x} #{$board_y}"
+    
+    if $best_score == nil
+        puts "No games played yet."
+    else
+        puts "Best game: #{$best_score} turns"
+    end
 
     case gets.chomp.downcase
         when "s"
             puts "Starting the game"
             game
         when "c"
-            print "Width [Currently #{$board_x}]: "
-            $board_x = gets.to_i
+            print "Width [Currently #{$board_x + 1}]: "
+            $board_x = gets.to_i - 1
 
-            print "Height [Currently #{$board_y}]: "
-            $board_y = gets.to_i
+            print "Height [Currently #{$board_y + 1}]: "
+            $board_y = gets.to_i - 1
         when "q"
             puts "Goodbye"
             break
