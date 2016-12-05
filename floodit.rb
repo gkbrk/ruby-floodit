@@ -16,24 +16,10 @@ def clear_screen
 end
 
 def kawaii_print
-    for line in $board
-        for box in line
-            case box
-                when :red
-                    print "  ".on_red
-                when :blue
-                    print "  ".on_blue
-                when :green
-                    print "  ".on_green
-                when :yellow
-                    print "  ".on_yellow
-                when :cyan
-                    print "  ".on_cyan
-                when :magenta
-                    print "  ".on_magenta
-                else
-                    print "  ".on_white
-            end
+    # Prints the board on the terminal with ANSI backgrounds
+    $board.each do |line|
+        line.each do |box|
+            print "  ".colorize(:background => box)
         end
         puts
     end
@@ -52,10 +38,18 @@ def game
         puts "Current completion: #{game_get_completion}%"
         print "Choose a color: "
         choice = gets.to_color
+        if choice == :quit
+            break
+        end
         update_board(0, 0, choice)
         turns += 1
 
         if game_get_completion == 100
+            clear_screen
+            kawaii_print
+            puts "You won after #{turns} turns"
+            gets
+            clear_screen
             break
         end
     end
@@ -70,7 +64,7 @@ def game_get_completion
             correct_count += 1
         end
     end
-    return (correct_count.to_f/block_count*100).round # Return percentage
+    return (correct_count.to_f/block_count*100).to_i # Return percentage
 end
 
 def update_board(x, y, color)
@@ -110,6 +104,8 @@ class String
                 :cyan
             when "m", "magenta"
                 :magenta
+            when "q", "quit"
+                :quit
             else
                 :red
         end
