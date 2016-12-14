@@ -1,5 +1,9 @@
+#!/usr/bin/ruby
 require 'console_splash'
 require 'colorize'
+
+# Written by: Gokberk Yaltirakli
+# Student number: 160153732
 
 def get_board(width, height)
     # Returns a randomly generated board of given width and height
@@ -12,10 +16,11 @@ def get_board(width, height)
 end
 
 def clear_screen
+    # Clears the screen using an ANSI escape sequence
     print "\e[H\e[2J"
 end
 
-def kawaii_print
+def board_print
     # Prints the board on the terminal with ANSI backgrounds
     $board.each do |line|
         line.each do |box|
@@ -33,7 +38,7 @@ def game
     while true
         clear_screen
         puts
-        kawaii_print
+        board_print
         puts "Number of turns: #{turns}"
         puts "Current completion: #{game_get_completion}%"
         print "Choose a color: "
@@ -50,16 +55,18 @@ def game
             end
             clear_screen
             puts
-            kawaii_print
-            puts "You won after #{turns} turns"
-            gets
-            clear_screen
+            board_print
+            puts "You won after #{turns} turns\n"
             break
         end
     end
 end
 
 def game_get_completion
+    # Get the color on the top-left corner
+    # Count the number of block with the same color
+    # Divide by the number of total blocks on the board
+
     current_color = $board[0][0]
     block_count = $board.flatten.length
     correct_count = 0
@@ -72,6 +79,7 @@ def game_get_completion
 end
 
 def update_board(x, y, color)
+    # Update the board colors using a recursive algorithm
     old_color = $board[y][x]
     $board[y][x] = color
 
@@ -128,10 +136,12 @@ splash.write_header("CLI Flood-It", "Gokberk Yaltirakli", "1.0")
 splash.write_horizontal_pattern("=")
 splash.write_vertical_pattern("=")
 splash.splash()
-gets
+gets # Keep the splash screen on the terminal
 
 clear_screen
 
+# Global variables make this code so much
+# shorter and a lot easier to understand
 $board_x = 13
 $board_y = 8
 $board = [[]]
@@ -149,9 +159,9 @@ while true
         puts "Best game: #{$best_score} turns"
     end
 
+    print "Please enter your choice: "
     case gets.chomp.downcase
         when "s"
-            puts "Starting the game"
             game
         when "c"
             print "Width [Currently #{$board_x + 1}]: "
@@ -159,6 +169,9 @@ while true
 
             print "Height [Currently #{$board_y + 1}]: "
             $board_y = gets.to_i - 1
+
+            # Reset best score when changing the board size
+            $best_score = nil
         when "q"
             puts "Goodbye"
             break
